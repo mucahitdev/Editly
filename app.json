@@ -3,7 +3,7 @@
     "name": "editly",
     "slug": "editly",
     "version": "1.0.0",
-
+    "newArchEnabled": true,
     "scheme": "editly",
     "web": {
       "bundler": "metro",
