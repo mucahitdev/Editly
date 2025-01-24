@@ -1,7 +1,10 @@
 import { Image } from 'expo-image';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Dimensions } from 'react-native';
 
+import { theme } from '@/common/theme';
+import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
 import { useVideoConversion } from '@/hooks/useVideoConversion';
 import { formatDuration, formatFileSize } from '@/utils/format';
 
@@ -32,7 +35,7 @@ export default function VideoToGif() {
   if (result?.success) {
     return (
       <ScrollView style={styles.container}>
-        <View style={styles.section}>
+        <Card variant="section">
           <Text style={styles.sectionTitle}>Dönüştürülen GIF</Text>
           <Image source={{ uri: result.outputPath }} style={styles.preview} contentFit="contain" />
           <View style={styles.infoContainer}>
@@ -40,28 +43,25 @@ export default function VideoToGif() {
               Boyut: {formatFileSize(result?.outputInfo?.fileSize)}
             </Text>
             <View style={styles.actionButtons}>
-              <TouchableOpacity
-                style={[styles.button, styles.shareButton]}
-                onPress={() => result.outputPath && shareGif(result.outputPath)}>
-                <Text style={styles.buttonText}>Paylaş</Text>
-              </TouchableOpacity>
+              <Button
+                title="Paylaş"
+                variant="success"
+                style={styles.shareButton}
+                onPress={() => result.outputPath && shareGif(result.outputPath)}
+              />
               {!isSaved ? (
-                <TouchableOpacity
-                  style={[styles.button, styles.saveButton]}
-                  onPress={() => result.outputPath && saveToGallery(result.outputPath)}>
-                  <Text style={styles.buttonText}>Galeriye Kaydet</Text>
-                </TouchableOpacity>
+                <Button
+                  title="Galeriye Kaydet"
+                  style={styles.saveButton}
+                  onPress={() => result.outputPath && saveToGallery(result.outputPath)}
+                />
               ) : (
-                <View style={[styles.button, styles.savedButton]}>
-                  <Text style={styles.savedButtonText}>Kaydedildi</Text>
-                </View>
+                <Button title="Kaydedildi" variant="disabled" style={styles.saveButton} />
               )}
             </View>
           </View>
-        </View>
-        <TouchableOpacity style={styles.newButton} onPress={handleNewVideo}>
-          <Text style={styles.buttonText}>Yeni Video Seç</Text>
-        </TouchableOpacity>
+        </Card>
+        <Button title="Yeni Video Seç" size="large" onPress={handleNewVideo} />
       </ScrollView>
     );
   }
@@ -69,15 +69,13 @@ export default function VideoToGif() {
   return (
     <ScrollView style={styles.container}>
       {!selectedVideo ? (
-        <View style={styles.card}>
+        <Card>
           <Text style={styles.title}>Video to GIF Dönüştürücü</Text>
           <Text style={styles.description}>Videoyu seçin ve otomatik olarak GIF'e dönüştürün</Text>
-          <TouchableOpacity style={styles.button} onPress={pickVideo}>
-            <Text style={styles.buttonText}>Video Seç</Text>
-          </TouchableOpacity>
-        </View>
+          <Button title="Video Seç" onPress={pickVideo} />
+        </Card>
       ) : (
-        <View style={styles.section}>
+        <Card variant="section">
           <Text style={styles.sectionTitle}>Seçilen Video</Text>
           <VideoView style={styles.preview} player={videoPlayer} nativeControls />
           <View style={styles.infoContainer}>
@@ -91,11 +89,9 @@ export default function VideoToGif() {
               <Text style={styles.progressText}>{Math.round(progress)}%</Text>
             </View>
           ) : (
-            <TouchableOpacity style={styles.button} onPress={startConversion}>
-              <Text style={styles.buttonText}>Dönüştürmeyi Başlat</Text>
-            </TouchableOpacity>
+            <Button title="Dönüştürmeyi Başlat" onPress={startConversion} />
           )}
-        </View>
+        </Card>
       )}
 
       {error && (
@@ -138,7 +134,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: theme.fonts.bold,
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -147,10 +143,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
     color: '#666',
+    fontFamily: theme.fonts.regular,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: theme.fonts.bold,
     marginBottom: 10,
   },
   preview: {
@@ -169,6 +166,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 8,
     color: '#333',
+    fontFamily: theme.fonts.medium,
   },
   divider: {
     height: 1,
@@ -199,6 +197,7 @@ const styles = StyleSheet.create({
     color: 'red',
     marginTop: 8,
     textAlign: 'center',
+    fontFamily: theme.fonts.medium,
   },
   successContainer: {
     flex: 1,
@@ -220,7 +219,7 @@ const styles = StyleSheet.create({
   },
   successTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: theme.fonts.bold,
     color: '#4CAF50',
     marginBottom: 8,
   },
@@ -228,6 +227,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
+    fontFamily: theme.fonts.regular,
   },
   actionButtons: {
     flexDirection: 'row',
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: '#000',
     fontSize: 12,
-    fontWeight: '600',
+    fontFamily: theme.fonts.semiBold,
   },
   savedButton: {
     flex: 1,
@@ -273,6 +273,6 @@ const styles = StyleSheet.create({
   savedButtonText: {
     color: '#757575',
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: theme.fonts.semiBold,
   },
 });
