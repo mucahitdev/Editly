@@ -3,8 +3,10 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import Toast from 'react-native-toast-message';
 
 import Fonts from '@/common/fonts';
+import { toastConfig } from '@/config/toast';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -40,6 +42,7 @@ export default function Layout() {
           }}
         />
       </Stack>
+      <Toast config={toastConfig} position="top" topOffset={100} />
     </QueryClientProvider>
   );
 }

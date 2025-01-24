@@ -15,7 +15,7 @@ export default function VideoToGif() {
     error,
     result,
     selectedVideo,
-    saveSuccess,
+    isSaved,
     progress,
     resetState,
   } = useVideoConversion();
@@ -28,17 +28,6 @@ export default function VideoToGif() {
     resetState(); // Önce state'i temizle
     await pickVideo(); // Sonra yeni video seçimini başlat
   };
-
-  if (saveSuccess) {
-    return (
-      <View style={styles.successContainer}>
-        <View style={styles.successCard}>
-          <Text style={styles.successTitle}>Başarıyla Kaydedildi!</Text>
-          <Text style={styles.successDescription}>GIF galerinize kaydedildi.</Text>
-        </View>
-      </View>
-    );
-  }
 
   if (result?.success) {
     return (
@@ -56,11 +45,17 @@ export default function VideoToGif() {
                 onPress={() => result.outputPath && shareGif(result.outputPath)}>
                 <Text style={styles.buttonText}>Paylaş</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.saveButton]}
-                onPress={() => result.outputPath && saveToGallery(result.outputPath)}>
-                <Text style={styles.buttonText}>Galeriye Kaydet</Text>
-              </TouchableOpacity>
+              {!isSaved ? (
+                <TouchableOpacity
+                  style={[styles.button, styles.saveButton]}
+                  onPress={() => result.outputPath && saveToGallery(result.outputPath)}>
+                  <Text style={styles.buttonText}>Galeriye Kaydet</Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={[styles.button, styles.savedButton]}>
+                  <Text style={styles.savedButtonText}>Kaydedildi</Text>
+                </View>
+              )}
             </View>
           </View>
         </View>
@@ -267,6 +262,17 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: '#000',
     fontSize: 12,
+    fontWeight: '600',
+  },
+  savedButton: {
+    flex: 1,
+    marginLeft: 8,
+    backgroundColor: '#E0E0E0',
+    opacity: 1,
+  },
+  savedButtonText: {
+    color: '#757575',
+    fontSize: 16,
     fontWeight: '600',
   },
 });

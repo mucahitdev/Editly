@@ -5,17 +5,18 @@ import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 import { FFmpegKit, FFmpegKitConfig } from 'ffmpeg-kit-react-native';
 import { useState } from 'react';
+import Toast from 'react-native-toast-message';
 
 import { ConversionResult, VideoInfo } from '@/types/video';
 
 export const useVideoConversion = () => {
   const [selectedVideo, setSelectedVideo] = useState<VideoInfo | null>(null);
-  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const resetState = () => {
     setSelectedVideo(null);
-    setSaveSuccess(false);
+    setIsSaved(false);
     setProgress(0);
     videoToGifMutation.reset();
   };
@@ -94,7 +95,12 @@ export const useVideoConversion = () => {
       const isAvailable = await Sharing.isAvailableAsync();
 
       if (!isAvailable) {
-        throw new Error('Paylaşım bu cihazda kullanılamıyor');
+        Toast.show({
+          type: 'error',
+          text1: 'Paylaşım Hatası',
+          text2: 'Paylaşım bu cihazda kullanılamıyor',
+        });
+        return;
       }
 
       await Sharing.shareAsync(uri, {
@@ -102,16 +108,38 @@ export const useVideoConversion = () => {
         dialogTitle: 'GIF Paylaş',
       });
     } catch (error) {
-      console.error('Paylaşım hatası:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Paylaşım Hatası',
+        text2: 'Paylaşım başarısız oldu',
+      });
     }
   };
 
   const saveToGallery = async (uri: string) => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status === 'granted') {
-      await MediaLibrary.saveToLibraryAsync(uri);
-      setSaveSuccess(true);
-      setTimeout(resetState, 2000);
+      try {
+        await MediaLibrary.saveToLibraryAsync(uri);
+        setIsSaved(true);
+        Toast.show({
+          type: 'success',
+          text1: 'Başarılı',
+          text2: 'GIF galeriye kaydedildi',
+        });
+      } catch (error) {
+        Toast.show({
+          type: 'error',
+          text1: 'Kaydetme Hatası',
+          text2: 'Kaydetme başarısız oldu',
+        });
+      }
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'İzin Hatası',
+        text2: 'Galeri izni gerekli',
+      });
     }
   };
 
@@ -124,7 +152,7 @@ export const useVideoConversion = () => {
     error: videoToGifMutation.error,
     result: videoToGifMutation.data,
     selectedVideo,
-    saveSuccess,
+    isSaved,
     progress,
     resetState,
   };
