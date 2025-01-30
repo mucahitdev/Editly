@@ -1,39 +1,74 @@
-import { forwardRef } from 'react';
-import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
-type ButtonProps = {
-  title?: string;
-} & TouchableOpacityProps;
+import { theme } from '@/common/theme';
 
-export const Button = forwardRef<View, ButtonProps>(({ title, ...touchableProps }, ref) => {
+interface ButtonProps extends TouchableOpacityProps {
+  variant?: 'primary' | 'success' | 'disabled';
+  size?: 'normal' | 'large';
+  title: string;
+}
+
+export function Button({
+  style,
+  variant = 'primary',
+  size = 'normal',
+  title,
+  disabled,
+  ...props
+}: ButtonProps) {
   return (
-    <TouchableOpacity ref={ref} {...touchableProps} style={[styles.button, touchableProps.style]}>
-      <Text style={styles.buttonText}>{title}</Text>
+    <TouchableOpacity
+      style={[
+        styles.button,
+        styles[variant],
+        size === 'large' && styles.large,
+        disabled && styles.disabled,
+        style,
+      ]}
+      disabled={disabled || variant === 'disabled'}
+      {...props}>
+      <Text
+        style={[
+          styles.buttonText,
+          variant === 'disabled' && styles.disabledText,
+          size === 'large' && styles.largeText,
+        ]}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
-});
+}
 
 const styles = StyleSheet.create({
   button: {
+    padding: 12,
+    borderRadius: 8,
     alignItems: 'center',
-    backgroundColor: '#6366F1',
-    borderRadius: 24,
-    elevation: 5,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      height: 2,
-      width: 0,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    marginTop: 8,
+  },
+  primary: {
+    backgroundColor: '#007AFF',
+  },
+  success: {
+    backgroundColor: '#4CAF50',
+  },
+  disabled: {
+    backgroundColor: '#E0E0E0',
+  },
+  large: {
+    paddingVertical: 14,
   },
   buttonText: {
-    color: '#FFFFFF',
+    color: 'white',
     fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontFamily: theme.fonts.semiBold,
+  },
+  disabledText: {
+    color: '#757575',
+    fontFamily: theme.fonts.medium,
+  },
+  largeText: {
+    fontSize: 18,
+    fontFamily: theme.fonts.semiBold,
   },
 });

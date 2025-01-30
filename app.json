@@ -11,7 +11,17 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-font",
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ],
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -29,7 +39,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.koksoft.editly"
     },
     "android": {
       "adaptiveIcon": {
@@ -50,6 +61,7 @@
     },
     "updates": {
       "url": "https://u.expo.dev/e162a3bb-7029-44ab-a1be-83802b455bf2"
-    }
+    },
+    "owner": "koksoft"
   }
 }
